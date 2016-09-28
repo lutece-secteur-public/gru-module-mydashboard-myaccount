@@ -1,0 +1,34 @@
+  <#if notifications_list??>
+	<tr class="sub msg-${id_demand!}" id="sub-crm-demand-${id_demand!}">
+        <td colspan="4">
+          
+         
+                   <#list notifications_list as notification>
+                      <div class="panel panel-msg">
+                        <div class="panel-heading">
+                            <span class="img-admin img-circle">&nbsp;</span>
+                         </div>
+                        <div class="panel-body">
+                          <h5> 
+                            ${notification.dateCreation?date?string["dd.MM.yyyy HH:mm"]} - 
+                                      ${notification.sender!}
+                                         <#if notification.isRead(  )>
+                                            <span class="label label-success">Lu</span>
+                                         <#else>
+                                            <span class="label label-info">Nouveau</span>
+                                          </#if>
+                                  
+                             </h5>
+                             <p><b>${notification.object}</b></p>
+                          <p>${notification.message!}</p>
+                        </div>
+                      </div>
+                 </#list>
+            </td>
+      </tr>
+   </#if>   
+	
+	
+	
+	
+	

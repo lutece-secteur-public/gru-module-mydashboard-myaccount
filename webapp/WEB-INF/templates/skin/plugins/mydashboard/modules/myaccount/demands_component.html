@@ -1,0 +1,224 @@
+<#-- Get the demand_type from a given id demand type -->
+<#function getDemandType demand_types_list id_demand_type>
+    <#if demand_types_list?? && demand_types_list?has_content>
+        <#list demand_types_list as demand_type>
+            <#if demand_type.idDemandType = id_demand_type>
+                <#return demand_type>
+            </#if>
+        </#list>
+    </#if>
+</#function>
+<#function getMessageStatus message>
+ <#if message.idStatus?has_content>
+    <#if message.idStatus=="1">
+         <#return "En cours">
+     <#elseif message.idStatus=="2">
+            <#return  "Clos">
+       <#else>
+            <#return "En attente de pr&eacute;cision">
+     </#if>
+   </#if>
+   <#--
+          1 - En cours
+          2 - Clos
+          3 - En attente de précision
+     -->
+ </#function>
+<#if crm_user?has_content>
+    <!-- Doesn't display the draft block if the checkbox is not checked in the parameters -->
+    
+    <div class="panel panel-mcp" id="demandes">
+        <div class="panel-heading hidden">
+          <a name="mesdemandes"></a>
+          <h4 class="panel-title">
+            <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseMyRequests" aria-expanded="true" aria-controls="collapseMyRequests">
+               Mes demandes
+            </a>
+          </h4>
+        </div>
+        <div class="panel-body">
+          <form method="post" action="" class="form">
+           <input type="hidden" name="session" value="true">
+           <div class="table-responsive">
+               <#if demands_list?has_content>
+                  <#assign noDemand = false />
+                 <table class="table table-hover">
+                    <thead class="hidden-xs">
+                      <tr>
+                        <th> </th>
+                        <th class="demande-label"></th>
+                        <th class="hidden-xs text-center">
+                            <span>#i18n{crm.crm.columnStatus}</span>
+                        </th>
+                        <th class="hidden-xs text-center">
+                          <span>#i18n{crm.crm.columnActions}</span>
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                  <#list demands_list as demandGru>
+                  
+                  <#if demandGru.type=="crm_demand">
+                        <#if getDemandType( demand_types_list, demandGru.demand.idDemandType )?has_content>
+                          <#assign demand_type = getDemandType( demand_types_list, demandGru.demand.idDemandType )>
+                        </#if>
+                        <#if demand_type??>
+                            <tr id="crm-demand-${demandGru.demand.idDemand}" data-id="${demandGru.demand.idDemand!}" class="crm-demand-head">
+                              <td class="text-center">
+                                <#if ( demandGru.demand.getNumberNotifications(  ) > 0 )>
+                                  <a class="btn btn-link btn-default" href="jsp/site/Portal.jsp?page=crm&amp;action=manage_notifications&amp;id_demand=${demandGru.demand.idDemand}">
+                                    <i class="fa fa-envelope-o hidden" title="#i18n{crm.crm.labelMail}"></i>
+                                    <#if ( demandGru.demand.getNumberUnreadNotifications(  ) > 0 )>
+                                       <i class="fa fa-circle" title="${demandGru.demand.numberUnreadNotifications}"></i>
+                                    </#if>
+                                  </a>
+                                </#if>
+                              </td>
+                              <td class="demand-label">
+                                <h6>${demandGru.demand.dateModification?date?string["dd.MM.yyyy HH:mm"]}</h6>
+                                <#if ( demandGru.demand.getNumberUnreadNotifications(  ) > 0 )>
+                                  <h4>${demand_type.label!}</h4>
+                                <#else>
+                                  <h5>${demand_type.label!}</h5>
+                                </#if>
+                                <strong class="visible-xs">${demandGru.demand.statusText}</strong>
+                              </td>
+                              <td class="text-center hidden-xs"><strong>${demandGru.demand.statusText}</strong></td>
+                              <td class="text-center hidden-xs">
+                                <a class="btn btn-link btn-default" href="jsp/site/Portal.jsp?page=crm&amp;action=remove_demand&amp;id_demand=${demandGru.demand.idDemand}" title="#i18n{crm.crm.buttonDelete}">
+                                  <!-- <i class="fa fa-trash fa-2x"></i> -->
+                                  <img src="images/local/skin/trash.png" alt="Supprimer" title="Supprimer">
+                                </a>
+                                <a class="btn btn-link btn-default" href="jsp/site/plugins/crm/DoEditDemand.jsp?id_demand=${demandGru.demand.idDemand}" target="${demand_type.target}" title="#i18n{crm.crm.buttonModify}">
+                                  <!-- <i class="fa fa-archive fa-2x"></i> -->
+                                  <img src="images/local/skin/archive.png" alt="Supprimer" title="Supprimer">
+                                </a>
+                                </td>
+                              </tr>
+                          </#if>
+                           <#else>
+                            <#--MESSAGE PARIS CONNECT-->
+                             <tr id="msg-${demandGru.demand.idParent!}" data-id="${demandGru.demand.idParent!}" class="message-head" >
+                              <td class="text-center">
+                             </td>
+                              <td class="demand-label">
+                                <h6>${demandGru.demand.dateModification?date?string["dd.MM.yyyy HH:mm"]}<h6>
+                                <h5>${demandGru.demand.subject!}</h5>
+                                <strong class="visible-xs"> </strong>
+                              </td>
+                              <td class="text-center hidden-xs"><strong>${getMessageStatus(demandGru.demand)}</strong></td>
+                              <td class="text-center hidden-xs">
+                                <a class="btn btn-link btn-default" href="#" title="#i18n{crm.crm.buttonDelete}">
+                                  <!-- <i class="fa fa-trash fa-2x"></i> -->
+                                  <img src="images/local/skin/trash.png" alt="Supprimer" title="Supprimer">
+                                </a>
+                                <a class="btn btn-link btn-default" href="#" target="" title="#i18n{crm.crm.buttonModify}">
+                                  <!-- <i class="fa fa-archive fa-2x"></i> -->
+                                  <img src="images/local/skin/archive.png" alt="Supprimer" title="Supprimer">
+                                </a>
+                                </td>
+                              </tr>
+                           </#if>
+                    </#list>
+                  </tbody>
+                </table>
+              </form>
+              <form method="post" action="">
+                <input type="hidden" name="session" value="true">
+               </form>
+            <#else>
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th></th>
+                    <th><span>Date</span></th>
+                    <th><span>#i18n{crm.crm.columnStatus}</span></th>
+                    <th><span>#i18n{crm.crm.columnNotification}</span></th>
+                  </tr>
+                </thead>
+                <tbody>
+                     <tr>
+                           <td></td>
+                           <td colspan="3" class="text-center text-warning">
+                                     <i class="fa fa-warning"></i>  Aucune demande en cours.
+                           </td>
+                       </tr>
+                   </tbody>
+                 </table>
+               </#if>
+        </div>
+    </div>
+</#if>
+
+<p>
+  <a href="jsp/site/Portal.jsp?page=mydashboard&panel=mes_demandes" class="btn btn-info btn-demande">
+    Toutes mes d&eacute;marches
+  </a>
+</p>
+
+
+
+    
+<script>
+
+$(document).ready(function() {
+
+    $(".crm-demand-head").click(function(e) {
+        var idDemand = $(this).data("id")
+        if ($("#sub-crm-demand-" + idDemand).length > 0) {
+            $("#sub-crm-demand-" + idDemand).toggle();
+        } else {
+       
+            baseUrl = document.getElementsByTagName('base')[0].href;
+            jQuery.ajax(baseUrl + 'jsp/site/Portal.jsp?page=demandMyAcount&view=view_notifications&id_demand=' + idDemand, {
+                type: "GET",
+                cache: false,
+                success: function(data, status, xhr) {
+
+                    $("#crm-demand-" + idDemand).after(data);
+
+                },
+                error: function(jqxhr, textStatus, errorThrown) {
+                    if (jqxhr.status == 401) {
+
+                    }
+                },
+
+            });
+
+        }
+    });
+    $(".message-head").click(function(e) {
+        var idMessage = $(this).data("id")
+        if ($("#sub-msg-" + idMessage).length > 0) {
+            $("#sub-msg-" + idMessage).toggle();
+        } else {
+       
+            baseUrl = document.getElementsByTagName('base')[0].href;
+            jQuery.ajax(baseUrl + 'jsp/site/Portal.jsp?page=demandMyAcount&view=view_messages&id_message=' + idMessage, {
+                type: "GET",
+                cache: false,
+                success: function(data, status, xhr) {
+
+                    $("#msg-" + idMessage).after(data);
+
+                },
+                error: function(jqxhr, textStatus, errorThrown) {
+                    if (jqxhr.status == 401) {
+
+                    }
+                },
+
+            });
+
+        }
+    });
+});
+
+/*
+$( function() {
+  $(".navbar-nav > li").removeClass("active");
+    $(".navbar-nav > li#demarches").addClass("active");
+});
+*/
+</script>

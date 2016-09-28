@@ -1,0 +1,59 @@
+     <tr class="sub msg-${id_message!}" id="sub-msg-${id_message!}">
+        <td colspan="4">
+          
+           <#if user_message_list??>
+                <#list user_message_list as message>
+                      <div class="panel panel-msg">
+                        <div class="panel-heading">
+                               <#if user_informations_hash[message.idUsersFrom!]??>
+                                    <#if user_informations_hash[message.idUsersFrom].idUsers! == id_current_user>
+                                             <img src="images/local/skin/user_test.png" class="img-circle" alt="" title="Photo Profil">
+                                     <#else>
+                                              <span class="img-admin img-circle">&nbsp;</span>
+                                     </#if>
+                                 </#if>    
+                              </div>
+                        <div class="panel-body">
+                          <h5> 
+                          ${message.dateModification?date?string["dd.MM.yyyy HH:mm"]} - 
+                             <#if user_informations_hash[message.idUsersFrom!]??>
+                                    <#if user_informations_hash[message.idUsersFrom].idUsers! == id_current_user>
+                                          Vous avez &eacute;crit
+                                     <#else>
+                                          ${user_informations_hash[message.idUsersFrom].firstname!} a &eacute;crit
+                                      </#if>    
+                                     <#if message.read??>
+                                        <#if message.read=="1">
+                                            <span class="label label-success">Lu</span>
+                                         <#else>
+                                            <span class="label label-info">Nouveau</span>
+                                          </#if>
+                                      </#if>
+                                  </#if>
+                             </h5>
+                          <p>${message.body!}</p>
+                        </div>
+                      </div>
+                 </#list>
+            </#if>          
+         
+          <div class="panel panel-msg no-border">
+            <div class="panel-heading">
+              <span>&nbsp;</span>
+            </div>
+            <div class="panel-body">
+              <h5>Je souhaite apporter des pr&eacute;cisions sur le sujet</h5>
+              <form class="form" action="">
+                <div class="form-group">
+                  <textarea class="form-control" ></textarea>
+                </div>
+                <div class="form-group text-center">
+                    <button class="btn btn-primary" type="submit">
+                      Envoyer
+                    </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </td>
+      </tr>
