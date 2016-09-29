@@ -50,9 +50,9 @@
     </dependencies>
 
     <properties>
-        <componentName>mydashboard-myaccount-gru</componentName>
-        <jiraProjectName>CRMMYDASHB</jiraProjectName>
-        <jiraComponentId>12906</jiraComponentId>
+        <componentName>gru-module-mydashboard-myaccount</componentName>
+        <jiraProjectName>GRUMYACCOU </jiraProjectName>
+        <jiraComponentId></jiraComponentId>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
