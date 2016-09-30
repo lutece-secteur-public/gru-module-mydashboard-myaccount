@@ -9,7 +9,7 @@
           <a name="mesdemandes"></a>
           <h4 class="panel-title">
             <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseMyRequests" aria-expanded="true" aria-controls="collapseMyRequests">
-               Mes demandes
+               Mes dernières demandes
             </a>
           </h4>
         </div>
@@ -25,7 +25,7 @@
               <form method="post" action="">
                 <input type="hidden" name="session" value="true">
              </form>
-                <@paginationSite paginator/>
+         
             <#else>
               <table class="table table-hover">
                 <thead>
@@ -52,6 +52,11 @@
   
 </#if>
 
+<p>
+  <a href="jsp/site/Portal.jsp?page=mydashboard&panel=mes_demandes" class="btn btn-info btn-demande">
+    Toutes mes d&eacute;marches
+  </a>
+</p>
 
 
 

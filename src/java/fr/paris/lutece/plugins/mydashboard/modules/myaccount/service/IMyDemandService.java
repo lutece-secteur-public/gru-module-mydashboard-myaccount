@@ -35,11 +35,17 @@ package fr.paris.lutece.plugins.mydashboard.modules.myaccount.service;
 
 import fr.paris.lutece.plugins.crm.business.user.CRMUser;
 import fr.paris.lutece.plugins.mydashboard.modules.myaccount.business.IDemandWraper;
+import fr.paris.lutece.portal.service.security.LuteceUser;
 
 import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
 
 
 public interface IMyDemandService
 {
-    public List<IDemandWraper> getAllUserDemand( CRMUser crmUser );
+    List<IDemandWraper> getAllUserDemand( CRMUser crmUser );
+    void addInformations(HttpServletRequest request ,CRMUser crmUser,List<IDemandWraper>listDemand,Map<String, Object> model);
+    
 }

@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.mydashboard.modules.myaccount.web;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -53,34 +54,25 @@ import fr.paris.lutece.portal.service.security.SecurityService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.web.l10n.LocaleService;
-import fr.paris.lutece.portal.web.util.LocalizedPaginator;
 import fr.paris.lutece.util.html.HtmlTemplate;
-import fr.paris.lutece.util.html.Paginator;
-import fr.paris.lutece.util.url.UrlItem;
 
 
 /**
  * MyDashboardCRMComponent
  */
-public class MyDashboardDemandComponent extends MyDashboardComponent
+public class MyDashboardLastDemandComponent extends MyDashboardComponent
 {
-    private static final String DASHBOARD_COMPONENT_ID = "mydashboard-mycaccount.demandsComponent";
-    private static final String MESSAGE_DASHBOARD_COMPONENT_DESCRIPTION = "module.mydashboard.myaccount.component.demands.description";
-    private static final String TEMPLATE_DASHBOARD_COMPONENT = "/skin/plugins/mydashboard/modules/myaccount/demands_component.html";
+    private static final String DASHBOARD_COMPONENT_ID = "mydashboard-mycaccount.lastDemandsComponent";
+    private static final String MESSAGE_DASHBOARD_COMPONENT_DESCRIPTION = "module.mydashboard.myaccount.component.lastDemands.description";
+   
+    private static final String PROPERTY_NUMBER_DEMAND_DISPLAY= "mydashboard-mycaccount.numberOfDemandDisplay";
+    private static final String TEMPLATE_DASHBOARD_COMPONENT = "/skin/plugins/mydashboard/modules/myaccount/last_demands_component.html";
     private static final String MARK_XPAGE_MYDASHBOARD = "mydashboard";
-    private static final String MARK_PAGINATOR = "paginator";
-    public static final String MARK_NB_ITEMS_PER_PAGE = "nb_items_per_page";
-    
-    public static final String PROPERTY_URL_MES_DEMARCHES="mydashboard-mycaccount.url.mesdemarches";
-    
-    private String _strCurrentPageIndex;  
-    private int _nItemsPerPage;
+  
+  
     @Override
     public String getDashboardData( HttpServletRequest request )
     {
-	
-
-	 
         LuteceUser user = SecurityService.getInstance(  ).getRegisteredUser( request );
 
         createOrUpdateCRMAccount( user );
@@ -88,28 +80,30 @@ public class MyDashboardDemandComponent extends MyDashboardComponent
         CRMUserService crmUserService = CRMUserService.getService(  );
 
         CRMUser crmUser = crmUserService.findByUserGuid( user.getName(  ) );
-
+        int nNumberDemandToDisplay=AppPropertiesService.getPropertyInt(PROPERTY_NUMBER_DEMAND_DISPLAY, 3);
         if ( crmUser != null )
         {
             Map<String, Object> model = new HashMap<String, Object>(  );
 
             List<IDemandWraper> listDemandWraper = MyDemandService.getInstance(  ).getAllUserDemand( crmUser );
-            //Sort demand 
-            Collections.sort( listDemandWraper );
-           
-            _strCurrentPageIndex = Paginator.getPageIndex( request, Paginator.PARAMETER_PAGE_INDEX, _strCurrentPageIndex );
-    	    int nDefaultItemsPerPage = 10;
-    	    _nItemsPerPage = Paginator.getItemsPerPage( request, Paginator.PARAMETER_ITEMS_PER_PAGE, _nItemsPerPage, nDefaultItemsPerPage );
+            //Sort demand
             
             
-
-            // PAGINATOR
-            LocalizedPaginator<IDemandWraper> paginator = new LocalizedPaginator<IDemandWraper>( listDemandWraper, _nItemsPerPage, AppPropertiesService.getProperty(PROPERTY_URL_MES_DEMARCHES), Paginator.PARAMETER_PAGE_INDEX, _strCurrentPageIndex, request.getLocale(  ) );
-
-            model.put( MARK_NB_ITEMS_PER_PAGE, "" + _nItemsPerPage );
-            model.put( MARK_PAGINATOR, paginator );
-            
-            MyDemandService.getInstance().addInformations(request, crmUser, paginator.getPageItems(  ), model);
+            if(listDemandWraper!=null && listDemandWraper.size()>3)
+            {
+        	
+        	listDemandWraper=new ArrayList<IDemandWraper>(listDemandWraper.subList(0, nNumberDemandToDisplay)) ;
+            }
+        
+        
+        	       
+        
+        	
+        	Collections.sort( listDemandWraper);
+        
+        	
+        	
+            MyDemandService.getInstance().addInformations(request, crmUser, listDemandWraper, model);
          
             HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_DASHBOARD_COMPONENT,
                     LocaleService.getDefault(  ), model );

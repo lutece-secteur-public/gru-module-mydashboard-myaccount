@@ -9,5 +9,7 @@
     <!--  -->
     
     <bean id="mydashboard-myaccount.mydashboardDemandComponent" class="fr.paris.lutece.plugins.mydashboard.modules.myaccount.web.MyDashboardDemandComponent" />
-     <bean id="mydashboard-myaccount.myDemandService" class="fr.paris.lutece.plugins.mydashboard.modules.myaccount.service.MyDemandService" />
+    <bean id="mydashboard-myaccount.mydashboardLastDemandComponent" class="fr.paris.lutece.plugins.mydashboard.modules.myaccount.web.MyDashboardLastDemandComponent" />
+    <bean id="mydashboard-myaccount.myDemandService" class="fr.paris.lutece.plugins.mydashboard.modules.myaccount.service.MyDemandService" />
+      
 </beans>

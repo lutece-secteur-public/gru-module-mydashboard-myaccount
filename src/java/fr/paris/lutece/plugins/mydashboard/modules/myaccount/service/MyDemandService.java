@@ -33,6 +33,13 @@
  */
 package fr.paris.lutece.plugins.mydashboard.modules.myaccount.service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
 import fr.paris.lutece.plugins.crm.business.demand.Demand;
 import fr.paris.lutece.plugins.crm.business.demand.DemandFilter;
 import fr.paris.lutece.plugins.crm.business.user.CRMUser;
@@ -47,18 +54,19 @@ import fr.paris.lutece.plugins.mydashboard.modules.myaccount.business.MessageDem
 import fr.paris.lutece.plugins.parisconnect.business.Message;
 import fr.paris.lutece.plugins.parisconnect.business.UserInformations;
 import fr.paris.lutece.plugins.parisconnect.service.ParisConnectService;
+import fr.paris.lutece.portal.service.security.LuteceUser;
+import fr.paris.lutece.portal.service.security.SecurityService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import fr.paris.lutece.portal.service.util.AppPathService;
 
 
 public class MyDemandService implements IMyDemandService
 {
     private static IMyDemandService _singleton;
     private static final String BEAN_DEMAND_SERVICE = "mydashboard-myaccount.myDemandService";
+    private static final String MARK_USER_INFORMATION_HASH = "user_informations_hash";
+    private static final String MARK_ID_CURRENT_USER = "id_current_user";
+    private static final String MARK_DEMANDS_LIST = "demands_list";
 
     public static IMyDemandService getInstance(  )
     {
@@ -107,5 +115,72 @@ public class MyDemandService implements IMyDemandService
         }
 
         return listDemandWraper;
+    }
+    
+    
+ 
+    public void addInformations(HttpServletRequest request ,CRMUser crmUser,List<IDemandWraper>listDemand,Map<String, Object> model)
+    {
+	
+	   //Crm Informations
+        model.put( CRMConstants.MARK_STATUS_CRM_LIST,
+            DemandStatusCRMService.getService(  ).getAllStatusCRM( request.getLocale(  ) ) );
+        model.put( CRMConstants.MARK_DISPLAYDRAFT,
+            AdvancedParametersService.getService(  ).isParameterValueByKey( CRMConstants.CONSTANT_DISPLAYDRAFT ) );
+        model.put( CRMConstants.MARK_LOCALE, request.getLocale(  ) );
+        model.put( CRMConstants.MARK_DEMAND_TYPES_LIST, DemandTypeService.getService(  ).findAll(  ) );
+        model.put( CRMConstants.MARK_MAP_DO_LOGIN, SecurityService.getInstance(  ).getLoginPageUrl(  ) );
+        model.put( CRMConstants.MARK_BASE_URL, AppPathService.getBaseUrl( request ) );
+
+        //Message Informations
+        Map<String, UserInformations> mapUserInformations = null;
+        UserInformations currentUserInformations = ParisConnectService.getInstance(  )
+                                                                      .getUser( crmUser.getUserGuid(), true );
+        mapUserInformations = getUsersMapInformations( listDemand );
+        if(currentUserInformations!=null)
+        {
+    	model.put( MARK_ID_CURRENT_USER, currentUserInformations.getIdUsers(  ) );
+        }
+        model.put( MARK_USER_INFORMATION_HASH, mapUserInformations );
+        model.put( CRMConstants.MARK_CRM_USER, crmUser );
+        model.put( MARK_DEMANDS_LIST, listDemand );
+
+    }
+    
+  private Map<String, UserInformations> getUsersMapInformations( List<IDemandWraper> lisdemandWraper )
+    {
+        Map<String, UserInformations> mapUserInformations = new HashMap<String, UserInformations>(  );
+        UserInformations userInformations = null;
+        Message message;
+
+        for ( IDemandWraper demandWrapper : lisdemandWraper )
+        {
+            if ( demandWrapper.getType(  ).equals( IDemandWraper.DEMAND_MESSAGE_TYPE ) )
+            {
+                message = (Message) demandWrapper.getDemand(  );
+
+                if ( !mapUserInformations.containsKey( message.getIdUsersFrom(  ) ) )
+                {
+                    userInformations = ParisConnectService.getInstance(  ).getUserName( message.getIdUsersFrom(  ), true );
+
+                    if ( userInformations != null )
+                    {
+                        mapUserInformations.put( message.getIdUsersFrom(  ), userInformations );
+                    }
+                }
+
+                if ( !mapUserInformations.containsKey( message.getIdUsersTo(  ) ) )
+                {
+                    userInformations = ParisConnectService.getInstance(  ).getUserName( message.getIdUsersTo(  ), true );
+
+                    if ( userInformations != null )
+                    {
+                        mapUserInformations.put( message.getIdUsersTo(  ), userInformations );
+                    }
+                }
+            }
+        }
+
+        return mapUserInformations;
     }
 }
