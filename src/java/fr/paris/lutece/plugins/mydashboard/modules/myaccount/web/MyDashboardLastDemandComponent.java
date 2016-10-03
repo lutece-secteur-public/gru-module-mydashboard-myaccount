@@ -88,20 +88,13 @@ public class MyDashboardLastDemandComponent extends MyDashboardComponent
             List<IDemandWraper> listDemandWraper = MyDemandService.getInstance(  ).getAllUserDemand( crmUser );
             //Sort demand
             
-            
+            Collections.sort( listDemandWraper);
             if(listDemandWraper!=null && listDemandWraper.size()>3)
             {
         	
         	listDemandWraper=new ArrayList<IDemandWraper>(listDemandWraper.subList(0, nNumberDemandToDisplay)) ;
             }
         
-        
-        	       
-        
-        	
-        	Collections.sort( listDemandWraper);
-        
-        	
         	
             MyDemandService.getInstance().addInformations(request, crmUser, listDemandWraper, model);
          
