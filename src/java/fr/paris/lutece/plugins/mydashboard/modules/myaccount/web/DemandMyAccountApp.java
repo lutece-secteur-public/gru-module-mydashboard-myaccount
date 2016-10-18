@@ -33,6 +33,15 @@
  */
 package fr.paris.lutece.plugins.mydashboard.modules.myaccount.web;
 
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+
+import fr.paris.lutece.plugins.avatar.service.AvatarService;
 import fr.paris.lutece.plugins.crm.business.demand.Demand;
 import fr.paris.lutece.plugins.crm.business.demand.DemandType;
 import fr.paris.lutece.plugins.crm.business.notification.Notification;
@@ -55,14 +64,6 @@ import fr.paris.lutece.portal.util.mvc.xpage.MVCApplication;
 import fr.paris.lutece.portal.util.mvc.xpage.annotations.Controller;
 import fr.paris.lutece.portal.web.xpages.XPage;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
-
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
 
 @Controller( xpageName = "demandMyAcount", pageTitleI18nKey = "module.mydashboard.myaccount.demandMyAccountApp.pageTitle", pagePathI18nKey = "module.mydashboard.myaccount.demandMyAccountApp.pageLabel" )
 public class DemandMyAccountApp extends MVCApplication
@@ -82,7 +83,7 @@ public class DemandMyAccountApp extends MVCApplication
     private static final String MARK_ID_CURRENT_USER = "id_current_user";
     private static final String MARK_ID_DEMAND = "id_demand";
     private static final String MARK_ID_MESSAGE= "id_message";
-    
+    private static final String MARK_AVATAR_URL = "avatar_url";
     
 
     @View( value = VIEW_NOTIFICATIONS, defaultView = true )
@@ -168,6 +169,9 @@ public class DemandMyAccountApp extends MVCApplication
                     mapUserInformations = MessageXPage.getUsersMapInformations( listUserMessage, currentUserInformations );
                     model.put( MARK_USER_INFORMATION_HASH, mapUserInformations );
                     model.put( MARK_USER_MESSAGE_LIST, listUserMessage );
+                    model.put( MARK_AVATAR_URL, getAvatarUrl( request ) );
+                    
+                    
                     //update unread flag
                     if(PARIS_CONNECT_CONSTANT_UNREAD.equals( parentMessage.get( 0 ).getRead( )))
                     {
@@ -202,4 +206,18 @@ public class DemandMyAccountApp extends MVCApplication
         xpage.setStandalone( true );
         return xpage;
     }
+    
+    /**
+     * Return the avatar URL
+     * 
+     * @param request
+     *            The HTTP request
+     * @return The URL
+     */
+    private String getAvatarUrl( HttpServletRequest request )
+    {
+        LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
+        return AvatarService.getAvatarUrl( user.getEmail( ) );
+    }
+    
 }
