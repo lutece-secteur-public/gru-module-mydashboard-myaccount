@@ -35,6 +35,7 @@ package fr.paris.lutece.plugins.mydashboard.modules.myaccount.web;
 
 import fr.paris.lutece.plugins.crm.business.demand.Demand;
 import fr.paris.lutece.plugins.crm.business.demand.DemandType;
+import fr.paris.lutece.plugins.crm.business.notification.Notification;
 import fr.paris.lutece.plugins.crm.business.notification.NotificationFilter;
 import fr.paris.lutece.plugins.crm.business.user.CRMUser;
 import fr.paris.lutece.plugins.crm.service.demand.DemandService;
@@ -54,6 +55,7 @@ import fr.paris.lutece.portal.util.mvc.xpage.MVCApplication;
 import fr.paris.lutece.portal.util.mvc.xpage.annotations.Controller;
 import fr.paris.lutece.portal.web.xpages.XPage;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.List;
@@ -67,6 +69,7 @@ public class DemandMyAccountApp extends MVCApplication
 {
     private static final String VIEW_NOTIFICATIONS = "view_notifications";
     private static final String VIEW_MESSAGES = "view_messages";
+    private static final String PARIS_CONNECT_CONSTANT_UNREAD="0";
 
     // Parameters
     private static final String PARAMETER_ID_MESSAGE = "id_message";
@@ -103,11 +106,26 @@ public class DemandMyAccountApp extends MVCApplication
                 {
                     NotificationFilter nFilter = new NotificationFilter(  );
                     nFilter.setIdDemand( nIdDemand );
-
+                    List<Notification> listNotification= NotificationService.getService(  ).findByFilter( nFilter );
                     DemandType demandType = DemandTypeService.getService(  ).findByPrimaryKey( demand.getIdDemandType(  ) );
                     model.put( CRMConstants.MARK_NOTIFICATIONS_LIST,
-                        NotificationService.getService(  ).findByFilter( nFilter ) );
+                            listNotification );
                     model.put( CRMConstants.MARK_DEMAND_TYPE, demandType );
+                    //update unread Flag
+                    if(!CollectionUtils.isEmpty( listNotification ))
+                    {
+                      for(Notification notification:listNotification)
+                      {
+                          if(!notification.isRead( ))
+                          {
+                              Notification notificationSave= NotificationService.getService( ).findByPrimaryKey( notification.getIdNotification( ) );
+                              notificationSave.setIsRead( true );
+                              NotificationService.getService( ).update( notificationSave );
+                          }
+                        }
+                        
+                    }
+                    
                 }
             }
         }
@@ -150,8 +168,27 @@ public class DemandMyAccountApp extends MVCApplication
                     mapUserInformations = MessageXPage.getUsersMapInformations( listUserMessage, currentUserInformations );
                     model.put( MARK_USER_INFORMATION_HASH, mapUserInformations );
                     model.put( MARK_USER_MESSAGE_LIST, listUserMessage );
+                    //update unread flag
+                    if(PARIS_CONNECT_CONSTANT_UNREAD.equals( parentMessage.get( 0 ).getRead( )))
+                    {
+                        ParisConnectService.getInstance( ).markMessageAsRead( parentMessage.get( 0 ).getIdMessage( ) );
+                    }
+                  //update unread on sub message
+                    if (!CollectionUtils.isEmpty(listUserMessage))
+                    {
+                        for(Message message:listUserMessage)
+                        {
+                            if(PARIS_CONNECT_CONSTANT_UNREAD.equals(message.getRead( )))
+                            {
+                                ParisConnectService.getInstance( ).markMessageAsRead( message.getIdMessage( ) );
+                            }
+                        }
+                        
+                    }
+                    
                    
                 }
+                 
             }
 
             model.put( MARK_ID_CURRENT_USER, currentUserInformations.getIdUsers(  ) );
