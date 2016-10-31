@@ -63,6 +63,7 @@ import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 import fr.paris.lutece.portal.util.mvc.xpage.MVCApplication;
 import fr.paris.lutece.portal.util.mvc.xpage.annotations.Controller;
 import fr.paris.lutece.portal.web.xpages.XPage;
+import java.util.Map.Entry;
 
 
 @Controller( xpageName = "demandMyAcount", pageTitleI18nKey = "module.mydashboard.myaccount.demandMyAccountApp.pageTitle", pagePathI18nKey = "module.mydashboard.myaccount.demandMyAccountApp.pageLabel" )
@@ -80,6 +81,7 @@ public class DemandMyAccountApp extends MVCApplication
     //Marker
     private static final String MARK_USER_MESSAGE_LIST = "user_message_list";
     private static final String MARK_USER_INFORMATION_HASH = "user_informations_hash";
+    private static final String MARK_LUTECE_USER_INFORMATIONS = "user_lutece_informations";
     private static final String MARK_ID_CURRENT_USER = "id_current_user";
     private static final String MARK_ID_DEMAND = "id_demand";
     private static final String MARK_ID_MESSAGE= "id_message";
@@ -146,6 +148,7 @@ public class DemandMyAccountApp extends MVCApplication
         List<Message> listUserMessage = null;
         LuteceUser user = SecurityService.getInstance(  ).getRegisteredUser( request );
         Map<String, UserInformations> mapUserInformations = null;
+        Map<String, String> mapLuteceUserInformations = null;
 
         if ( user == null )
         {
@@ -167,6 +170,9 @@ public class DemandMyAccountApp extends MVCApplication
                 {
                     listUserMessage = ParisConnectService.getInstance(  ).getTicket( strIdMessage );
                     mapUserInformations = MessageXPage.getUsersMapInformations( listUserMessage, currentUserInformations );
+                    mapLuteceUserInformations = user.getUserInfos();
+                    
+                    model.put( MARK_LUTECE_USER_INFORMATIONS, mapLuteceUserInformations );
                     model.put( MARK_USER_INFORMATION_HASH, mapUserInformations );
                     model.put( MARK_USER_MESSAGE_LIST, listUserMessage );
                     model.put( MARK_AVATAR_URL, getAvatarUrl( request ) );
