@@ -40,6 +40,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import fr.paris.lutece.plugins.crm.business.user.CRMUser;
 import fr.paris.lutece.plugins.crm.service.user.CRMUserAttributesService;
@@ -64,17 +65,20 @@ import fr.paris.lutece.util.url.UrlItem;
  */
 public class MyDashboardDemandComponent extends MyDashboardComponent
 {
+    
+    public static final String MARK_NB_ITEMS_PER_PAGE = "nb_items_per_page";
+    public static final String PROPERTY_URL_MES_DEMARCHES="mydashboard-mycaccount.url.mesdemarches";
+    
     private static final String DASHBOARD_COMPONENT_ID = "mydashboard-mycaccount.demandsComponent";
     private static final String MESSAGE_DASHBOARD_COMPONENT_DESCRIPTION = "module.mydashboard.myaccount.component.demands.description";
     private static final String TEMPLATE_DASHBOARD_COMPONENT = "/skin/plugins/mydashboard/modules/myaccount/demands_component.html";
     private static final String MARK_XPAGE_MYDASHBOARD = "mydashboard";
     private static final String MARK_PAGINATOR = "paginator";
-    public static final String MARK_NB_ITEMS_PER_PAGE = "nb_items_per_page";
+    private static final String CURRENT_PAGE_INDEX = "current_page_index";
+    private static final String PROPERTY_NUMBER_OF_DEMAND_PER_PAGE="mydashboard-mycaccount.numberOfDemandPerPage";
     
-    public static final String PROPERTY_URL_MES_DEMARCHES="mydashboard-mycaccount.url.mesdemarches";
+
     
-    private String _strCurrentPageIndex;  
-    private int _nItemsPerPage;
     @Override
     public String getDashboardData( HttpServletRequest request )
     {
@@ -96,17 +100,17 @@ public class MyDashboardDemandComponent extends MyDashboardComponent
             List<IDemandWraper> listDemandWraper = MyDemandService.getInstance(  ).getAllUserDemand( crmUser );
             //Sort demand 
             Collections.sort( listDemandWraper );
-           
-            _strCurrentPageIndex = Paginator.getPageIndex( request, Paginator.PARAMETER_PAGE_INDEX, _strCurrentPageIndex );
-    	    int nDefaultItemsPerPage = 10;
-    	    _nItemsPerPage = Paginator.getItemsPerPage( request, Paginator.PARAMETER_ITEMS_PER_PAGE, _nItemsPerPage, nDefaultItemsPerPage );
-            
-            
+            HttpSession session = request.getSession( true );
 
-            // PAGINATOR
-            LocalizedPaginator<IDemandWraper> paginator = new LocalizedPaginator<IDemandWraper>( listDemandWraper, _nItemsPerPage, AppPropertiesService.getProperty(PROPERTY_URL_MES_DEMARCHES), Paginator.PARAMETER_PAGE_INDEX, _strCurrentPageIndex, request.getLocale(  ) );
+            String strCurrentPageIndex=session.getAttribute( CURRENT_PAGE_INDEX )!=null ?(String)session.getAttribute( CURRENT_PAGE_INDEX ):null  ;  
+            strCurrentPageIndex = Paginator.getPageIndex( request, Paginator.PARAMETER_PAGE_INDEX, strCurrentPageIndex );
+            session.setAttribute( CURRENT_PAGE_INDEX, strCurrentPageIndex );
+            
+    	    int nDefaultItemsPerPage = AppPropertiesService.getPropertyInt( PROPERTY_NUMBER_OF_DEMAND_PER_PAGE, 10 );
+    	     // PAGINATOR
+            LocalizedPaginator<IDemandWraper> paginator = new LocalizedPaginator<IDemandWraper>( listDemandWraper, nDefaultItemsPerPage, AppPropertiesService.getProperty(PROPERTY_URL_MES_DEMARCHES), Paginator.PARAMETER_PAGE_INDEX, strCurrentPageIndex, request.getLocale(  ) );
 
-            model.put( MARK_NB_ITEMS_PER_PAGE, "" + _nItemsPerPage );
+            model.put( MARK_NB_ITEMS_PER_PAGE, "" + nDefaultItemsPerPage );
             model.put( MARK_PAGINATOR, paginator );
             
             MyDemandService.getInstance().addInformations(request, crmUser, paginator.getPageItems(  ), model);
