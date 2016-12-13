@@ -190,7 +190,8 @@ public class DemandMyAccountApp extends MVCApplication
                         {
                             if(PARIS_CONNECT_CONSTANT_UNREAD.equals(message.getRead( )))
                             {
-                                ParisConnectService.getInstance( ).markMessageAsRead( message.getIdMessage( ) );
+                                //mark as read parent message if one of sub message is unread
+                                ParisConnectService.getInstance( ).markMessageAsRead( parentMessage.get( 0 ).getIdMessage( )  );
                             }
                         }
                         
