@@ -54,6 +54,7 @@ import fr.paris.lutece.plugins.mydashboard.modules.myaccount.business.MessageDem
 import fr.paris.lutece.plugins.parisconnect.business.Message;
 import fr.paris.lutece.plugins.parisconnect.business.UserInformations;
 import fr.paris.lutece.plugins.parisconnect.service.ParisConnectService;
+import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.security.LuteceUser;
 import fr.paris.lutece.portal.service.security.SecurityService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
@@ -67,6 +68,9 @@ public class MyDemandService implements IMyDemandService
     private static final String MARK_USER_INFORMATION_HASH = "user_informations_hash";
     private static final String MARK_ID_CURRENT_USER = "id_current_user";
     private static final String MARK_DEMANDS_LIST = "demands_list";
+    private static final String PLUGIN_CRM = "crm";
+    private static final String PLUGIN_PARIS_CONNECT = "parisconnect";
+    
 
     public static IMyDemandService getInstance(  )
     {
@@ -81,35 +85,46 @@ public class MyDemandService implements IMyDemandService
     @Override
     public List<IDemandWraper> getAllUserDemand( CRMUser crmUser )
     {
-        DemandFilter dFilter = new DemandFilter(  );
-        dFilter.setIdCRMUser( crmUser.getIdCRMUser(  ) );
-
+        
         List<IDemandWraper> listDemandWraper = new ArrayList<IDemandWraper>(  );
-        List<Demand> listDemand = DemandService.getService(  ).findByFilter( dFilter );
-
-        //Put All CRM demand
-        if ( listDemand != null )
-        {
-            for ( Demand demand : listDemand )
+        
+        
+       
+            DemandFilter dFilter = new DemandFilter(  );
+            dFilter.setIdCRMUser( crmUser.getIdCRMUser(  ) );
+    
+            
+            
+    
+            
+            List<Demand> listDemand = DemandService.getService(  ).findByFilter( dFilter );
+    
+            //Put All CRM demand
+            if ( listDemand != null )
             {
-                listDemandWraper.add( new CrmDemandWraper( demand ) );
-            }
-        }
-
-        //Put All Message Demand
-        UserInformations currentUserInformations = ParisConnectService.getInstance(  )
-                                                                      .getUser( crmUser.getUserGuid(  ), true );
-
-        if ( ( currentUserInformations != null ) && ( currentUserInformations.getIdUsers(  ) != null ) )
-        {
-            List<Message> listUserMessage = ParisConnectService.getInstance(  )
-                                                               .getUserMessages( currentUserInformations.getIdUsers(  ) );
-
-            if ( listUserMessage != null )
-            {
-                for ( Message message : listUserMessage )
+                for ( Demand demand : listDemand )
                 {
-                    listDemandWraper.add( new MessageDemandWrapper( message ) );
+                    listDemandWraper.add( new CrmDemandWraper( demand ) );
+                }
+            }
+        //Test if paris connect is enable
+        if(PluginService.isPluginEnable( PLUGIN_PARIS_CONNECT ))
+        {
+            //Put All Message Demand
+            UserInformations currentUserInformations = ParisConnectService.getInstance(  )
+                                                                          .getUser( crmUser.getUserGuid(  ), true );
+    
+            if ( ( currentUserInformations != null ) && ( currentUserInformations.getIdUsers(  ) != null ) )
+            {
+                List<Message> listUserMessage = ParisConnectService.getInstance(  )
+                                                                   .getUserMessages( currentUserInformations.getIdUsers(  ) );
+    
+                if ( listUserMessage != null )
+                {
+                    for ( Message message : listUserMessage )
+                    {
+                        listDemandWraper.add( new MessageDemandWrapper( message ) );
+                    }
                 }
             }
         }
@@ -132,16 +147,22 @@ public class MyDemandService implements IMyDemandService
         model.put( CRMConstants.MARK_MAP_DO_LOGIN, SecurityService.getInstance(  ).getLoginPageUrl(  ) );
         model.put( CRMConstants.MARK_BASE_URL, AppPathService.getBaseUrl( request ) );
 
-        //Message Informations
-        Map<String, UserInformations> mapUserInformations = null;
-        UserInformations currentUserInformations = ParisConnectService.getInstance(  )
-                                                                      .getUser( crmUser.getUserGuid(), true );
-        mapUserInformations = getUsersMapInformations( listDemand );
-        if(currentUserInformations!=null)
+      //Test if paris connect is enable
+        if(PluginService.isPluginEnable( PLUGIN_PARIS_CONNECT ))
         {
-    	model.put( MARK_ID_CURRENT_USER, currentUserInformations.getIdUsers(  ) );
+            //Message Informations
+            Map<String, UserInformations> mapUserInformations = null;
+            UserInformations currentUserInformations = ParisConnectService.getInstance(  )
+                                                                          .getUser( crmUser.getUserGuid(), true );
+            mapUserInformations = getUsersMapInformations( listDemand );
+            if(currentUserInformations!=null)
+            {
+        	model.put( MARK_ID_CURRENT_USER, currentUserInformations.getIdUsers(  ) );
+            }
+            model.put( MARK_USER_INFORMATION_HASH, mapUserInformations );
         }
-        model.put( MARK_USER_INFORMATION_HASH, mapUserInformations );
+       
+        
         model.put( CRMConstants.MARK_CRM_USER, crmUser );
         model.put( MARK_DEMANDS_LIST, listDemand );
 
