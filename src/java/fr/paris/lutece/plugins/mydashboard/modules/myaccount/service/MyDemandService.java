@@ -59,6 +59,7 @@ import fr.paris.lutece.portal.service.security.LuteceUser;
 import fr.paris.lutece.portal.service.security.SecurityService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.util.AppPathService;
+import fr.paris.lutece.portal.service.util.AppPropertiesService;
 
 
 public class MyDemandService implements IMyDemandService
@@ -70,6 +71,8 @@ public class MyDemandService implements IMyDemandService
     private static final String MARK_DEMANDS_LIST = "demands_list";
     private static final String PLUGIN_CRM = "crm";
     private static final String PLUGIN_PARIS_CONNECT = "parisconnect";
+    private static final String DISPLAY_DEMAND_PARIS_CONNECT="mydashboard-mycaccount.displayDemandParisConnect";
+    
     
 
     public static IMyDemandService getInstance(  )
@@ -108,7 +111,7 @@ public class MyDemandService implements IMyDemandService
                 }
             }
         //Test if paris connect is enable
-        if(PluginService.isPluginEnable( PLUGIN_PARIS_CONNECT ))
+        if(PluginService.isPluginEnable( PLUGIN_PARIS_CONNECT ) && AppPropertiesService.getPropertyBoolean( DISPLAY_DEMAND_PARIS_CONNECT, false ))
         {
             //Put All Message Demand
             UserInformations currentUserInformations = ParisConnectService.getInstance(  )
@@ -148,7 +151,7 @@ public class MyDemandService implements IMyDemandService
         model.put( CRMConstants.MARK_BASE_URL, AppPathService.getBaseUrl( request ) );
 
       //Test if paris connect is enable
-        if(PluginService.isPluginEnable( PLUGIN_PARIS_CONNECT ))
+        if(PluginService.isPluginEnable( PLUGIN_PARIS_CONNECT )&& AppPropertiesService.getPropertyBoolean( DISPLAY_DEMAND_PARIS_CONNECT, false ))
         {
             //Message Informations
             Map<String, UserInformations> mapUserInformations = null;
