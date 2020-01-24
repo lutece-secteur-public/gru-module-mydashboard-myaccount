@@ -10,6 +10,40 @@
     
     <bean id="mydashboard-myaccount.mydashboardDemandComponent" class="fr.paris.lutece.plugins.mydashboard.modules.myaccount.web.MyDashboardDemandComponent" />
     <bean id="mydashboard-myaccount.mydashboardLastDemandComponent" class="fr.paris.lutece.plugins.mydashboard.modules.myaccount.web.MyDashboardLastDemandComponent" />
+    <bean id="mydashboard-myaccount.mydashboardFederationLinkComponent" class="fr.paris.lutece.plugins.mydashboard.modules.myaccount.web.MyDashboardFederationLinkComponent" />
     <bean id="mydashboard-myaccount.myDemandService" class="fr.paris.lutece.plugins.mydashboard.modules.myaccount.service.MyDemandService" />
+    
+    <!-- Add oauth2 handler and oauth2 client  for federation link  info -->
+	  <bean id="mydashboard-myaccount.federationLinkHandler" class="fr.paris.lutece.plugins.oauth2.web.CallbackHandler" >
+        <property name="handlerName" value="federationLinkHandler"/>
+        <property name="authServerConf" ref="mydashboard-myaccount.federationServerInfo"/>
+        <property name="authClientConf" ref="mydashboard-myaccount.federationClientInfo"/>
+        <property name="jWTParser" ref="oauth2.jwtParser"/>
+    </bean> 
+      <bean id="mydashboard-myaccount.federationServerInfo" class="fr.paris.lutece.plugins.oauth2.business.AuthServerConf">
+        <property name="issuer" value="http://fcp.integ01.dev-oauth2.fr"/>
+        <property name="authorizationEndpointUri" value="https://fcp.integ01.dev-franceconnect.fr/api/v1/authorize"/>
+        <property name="tokenEndpointUri" value="https://fcp.integ01.dev-franceconnect.fr/api/v1/token"/>
+        <property name="logoutEndpointUri" value="https://fcp.integ01.dev-franceconnect.fr/api/v1/logout"/>
+        <property name="enableJwtParser" value="true"/>
+      </bean> 
+    <bean id="mydashboard-myaccount.federationClientInfo" class="fr.paris.lutece.plugins.oauth2.business.AuthClientConf">
+        <property name="clientId" value="416f0d09da039cb288a11538baf00ce7529c5224942aad2a71d5423189bc018b"/>
+        <property name="clientSecret" value="7da5511b-d145-40dd-873e-fbb114351c88"/>
+        <property name="redirectUri" value="https://moncompte.rec.apps.paris.mdp/moncompte/servlet/plugins/oauth2/callback?handler_name=federationLinkHandler"/>
+    </bean>
+     <bean id="myluteceuser-gu.federationLinkInfoData" class="fr.paris.lutece.plugins.mydashboard.modules.myaccount.web.FederationLinkDataClient">
+        <property name="name" value="federationLinkInfoData" />
+        <property name="dataServerUri" value="https://fcp.integ01.dev-franceconnect.fr/api/v1/userinfo"/>
+        <property name="tokenMethod" value="HEADER"/>
+        <property name="scope">
+	     	<set value-type="java.lang.String">
+                <value>email</value>
+                <value>openid</value>
+                <value>identite_pivot</value>
+            </set>
+        </property>
+    </bean>    
+    
       
 </beans>

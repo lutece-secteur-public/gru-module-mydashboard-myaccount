@@ -1,0 +1,21 @@
+<#if federation_link_creation_status??>
+  <#if federation_link_creation_status=="OK">
+  		Vous venez de fédérer votre compte avec france connect 
+   <#else>
+  		Une erreur est survenue lors de la fédération de votre compte avec France connect
+  </#if>
+</#if>
+<#if federation_links?? && federation_links?has_content>
+<p>
+     Votre compte est fédéré avec France connect. vous pouvez désormais vous authentifier à Mon Paris à partir de France Connect
+ </p>
+  <a href="" class="btn btn-main py-0 btn-franceconnect">
+       Supprimer mon lien de fédération>   
+    </a>
+<#else>
+<p>
+  <a href="servlet/plugins/oauth2/callback?data_client=federationLinkInfoData&handler_name=federationLinkHandler" class="btn btn-main py-0 btn-franceconnect">
+                fédérer votre compte avec france connect : <img src="images/local/skin/btn_fc_certif.svg" width="100px" alt="France Connect" title="France Connect">   
+            </a> 
+ </p>
+</#if>
