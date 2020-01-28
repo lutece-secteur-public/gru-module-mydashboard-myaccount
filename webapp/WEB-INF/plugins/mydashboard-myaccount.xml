@@ -17,6 +17,10 @@
           <application-id>demandMyAcount</application-id>
           <application-class>fr.paris.lutece.plugins.mydashboard.modules.myaccount.web.DemandMyAccountApp</application-class>
       </application>
+      <application>
+          <application-id>federationLinkMyAcount</application-id>
+          <application-class>fr.paris.lutece.plugins.mydashboard.modules.myaccount.web.FederationLinkMyAccountApp</application-class>
+      </application>
    </applications>
     
 </plug-in>

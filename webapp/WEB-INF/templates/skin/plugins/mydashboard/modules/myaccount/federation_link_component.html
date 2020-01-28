@@ -1,21 +1,43 @@
-<#if federation_link_creation_status??>
+
+
+
+<section class="container px-sm-5 py-3">
+	<div class="row">
+		<div class="col-xs-12 col-sm-12 col-md-9 pt-3">
+			
+			<#if federation_link_creation_status??>
   <#if federation_link_creation_status=="OK">
-  		Vous venez de fédérer votre compte avec france connect 
+  
+  <p style="position: fixed;top: 100px;right: 15px;	background-color: #248619;min-height: 10vh;	width: 20vw;color: #fff;z-index: 1;padding: 20px;">
+  		<i class="fa fa-check"></i> Vous venez de fédérer votre compte avec france connect
+   </p> 
    <#else>
-  		Une erreur est survenue lors de la fédération de votre compte avec France connect
+    <p style="position:fixed;top:120px;right:0;background-color:#e22c3f;height:10vh;width:30vw;color:#fff;z-index:1;padding:20px">
+		Une erreur est survenue lors de la fédération de votre compte avec France connect
+  	</p>	
   </#if>
 </#if>
 <#if federation_links?? && federation_links?has_content>
-<p>
+<h2 class="main-color mb-3">France Connect</h2>
+<p >
      Votre compte est fédéré avec France connect. vous pouvez désormais vous authentifier à Mon Paris à partir de France Connect
  </p>
-  <a href="" class="btn btn-main py-0 btn-franceconnect">
-       Supprimer mon lien de fédération>   
+ 
+  <a href="jsp/site/Portal.jsp?page=federationLinkMyAcount&action=delete_federation_link&federation_link_provider=FranceConnect" class="btn btn-danger py-0 btn-franceconnect">
+       Supprimer mon lien de fédération   
     </a>
 <#else>
+<h2 class="main-color mb-3">M'authentifier avec France Connect</h2>
+			<p><strong>Nouveau!</strong> Vous pouvez dorénavant vous authentifier avec France connect sur Mon Paris. </p>
+			
 <p>
   <a href="servlet/plugins/oauth2/callback?data_client=federationLinkInfoData&handler_name=federationLinkHandler" class="btn btn-main py-0 btn-franceconnect">
-                fédérer votre compte avec france connect : <img src="images/local/skin/btn_fc_certif.svg" width="100px" alt="France Connect" title="France Connect">   
+                Associer mon compte avec france connect : <img src="images/local/skin/btn_fc_certif.svg" width="100px" alt="France Connect" title="France Connect">   
             </a> 
  </p>
 </#if>
+		</div>
+	
+	</div>
+</section>
+

@@ -44,6 +44,8 @@ import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 
+import com.sun.jersey.core.impl.provider.entity.XMLJAXBElementProvider.App;
+
 import fr.paris.lutece.plugins.oauth2.business.Token;
 import fr.paris.lutece.plugins.oauth2.dataclient.AbstractDataClient;
 import fr.paris.lutece.plugins.openamidentityclient.business.FederationLink;
@@ -52,6 +54,7 @@ import fr.paris.lutece.plugins.openamidentityclient.service.OpenamIdentityServic
 import fr.paris.lutece.portal.service.security.LuteceUser;
 import fr.paris.lutece.portal.service.security.SecurityService;
 import fr.paris.lutece.portal.service.util.AppLogService;
+import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 
 /**
@@ -63,7 +66,6 @@ public class FederationLinkDataClient extends AbstractDataClient
     public static final String PROPERTY_FEDERATION_LINK_IDENTITY_PROVIDER="mydashboard-mycaccount.federationLinkIdentityProvider";
     public static final String PROPERTY_FEDERATION_LINK_IDENTITY_FIELD_USER_NAME="mydashboard-mycaccount.federationLinkIdentityFieldUserName";
     public static final String PROPERTY_FEDERATION_LINK_IDENTITY_FIELD_USER_ID="mydashboard-mycaccount.federationLinkIdentityFieldUserId";
-    public static final String  PROPERTY_FEDERAION_LINK_REDIRECT_URL = "mydashboard-mycaccount.federationLink.redirectUrl";
     
     
 
@@ -112,10 +114,10 @@ public class FederationLinkDataClient extends AbstractDataClient
         finally {
         	  try {
         		  
-        		   String strNextUrl = AppPropertiesService.getProperty( PROPERTY_FEDERAION_LINK_REDIRECT_URL );
+        		   String strNextUrl = AppPropertiesService.getProperty(MyDashboardFederationLinkComponent.PROPERTY_FEDERAION_LINK_REDIRECT_URL );
                    strNextUrl += "&"+MyDashboardFederationLinkComponent.PARAMETER_FEDERATION_LINK_CREATTION_LINK_STATUS   + "=" + strFederationLinkStatus;
 
-				response.sendRedirect( strNextUrl );
+                   response.sendRedirect(AppPathService.getAbsoluteUrl( request, strNextUrl ));
 			} catch (IOException e) {
 				   _logger.error( "Error for redirect user after creation fedaration link ", e );			}
 		}
@@ -149,8 +151,10 @@ public class FederationLinkDataClient extends AbstractDataClient
         {
 
         	
-     	   String strNextUrl = AppPropertiesService.getProperty( PROPERTY_FEDERAION_LINK_REDIRECT_URL );
-           strNextUrl += "&"+MyDashboardFederationLinkComponent.PARAMETER_FEDERATION_LINK_CREATTION_LINK_STATUS   + "=" + strFederationLinkStatus;
+     	   String strNextUrl = AppPropertiesService.getProperty( MyDashboardFederationLinkComponent.PROPERTY_FEDERAION_LINK_REDIRECT_URL );
+           AppPathService.getAbsoluteUrl( request, strNextUrl );
+     	   
+     	   strNextUrl += "&"+MyDashboardFederationLinkComponent.PARAMETER_FEDERATION_LINK_CREATTION_LINK_STATUS   + "=" + strFederationLinkStatus;
 
 		response.sendRedirect( strNextUrl );
         }

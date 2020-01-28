@@ -63,6 +63,7 @@ public class MyDashboardFederationLinkComponent extends MyDashboardComponent
 {
    
     public static final String MARK_NB_ITEMS_PER_PAGE = "nb_items_per_page";
+    public static final String  PROPERTY_FEDERAION_LINK_REDIRECT_URL = "mydashboard-mycaccount.federationLink.redirectUrl";
     
     private static final String DASHBOARD_COMPONENT_ID = "mydashboard-mycaccount.federationLinkComponent";
     private static final String MESSAGE_DASHBOARD_COMPONENT_DESCRIPTION = "module.mydashboard.myaccount.component.federationlink.description";
