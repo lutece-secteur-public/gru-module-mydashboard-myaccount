@@ -63,9 +63,9 @@ import fr.paris.lutece.portal.service.util.AppPropertiesService;
 public class FederationLinkDataClient extends AbstractDataClient
 {
 
-    public static final String PROPERTY_FEDERATION_LINK_IDENTITY_PROVIDER="mydashboard-mycaccount.federationLinkIdentityProvider";
-    public static final String PROPERTY_FEDERATION_LINK_IDENTITY_FIELD_USER_NAME="mydashboard-mycaccount.federationLinkIdentityFieldUserName";
-    public static final String PROPERTY_FEDERATION_LINK_IDENTITY_FIELD_USER_ID="mydashboard-mycaccount.federationLinkIdentityFieldUserId";
+    public static final String PROPERTY_FEDERATION_LINK_IDENTITY_PROVIDER="mydashboard-myaccount.federationLinkIdentityProvider";
+    public static final String PROPERTY_FEDERATION_LINK_IDENTITY_FIELD_USER_NAME="mydashboard-myaccount.federationLinkIdentityFieldUserName";
+    public static final String PROPERTY_FEDERATION_LINK_IDENTITY_FIELD_USER_ID="mydashboard-myaccount.federationLinkIdentityFieldUserId";
     
     
 

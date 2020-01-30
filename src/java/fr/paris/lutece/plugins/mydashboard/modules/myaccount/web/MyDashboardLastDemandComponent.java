@@ -62,10 +62,10 @@ import fr.paris.lutece.util.html.HtmlTemplate;
  */
 public class MyDashboardLastDemandComponent extends MyDashboardComponent
 {
-    private static final String DASHBOARD_COMPONENT_ID = "mydashboard-mycaccount.lastDemandsComponent";
+    private static final String DASHBOARD_COMPONENT_ID = "mydashboard-myaccount.lastDemandsComponent";
     private static final String MESSAGE_DASHBOARD_COMPONENT_DESCRIPTION = "module.mydashboard.myaccount.component.lastDemands.description";
    
-    private static final String PROPERTY_NUMBER_DEMAND_DISPLAY= "mydashboard-mycaccount.numberOfDemandDisplay";
+    private static final String PROPERTY_NUMBER_DEMAND_DISPLAY= "mydashboard-myaccount.numberOfDemandDisplay";
     private static final String TEMPLATE_DASHBOARD_COMPONENT = "/skin/plugins/mydashboard/modules/myaccount/last_demands_component.html";
     private static final String MARK_XPAGE_MYDASHBOARD = "mydashboard";
   

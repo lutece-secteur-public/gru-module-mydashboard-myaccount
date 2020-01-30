@@ -67,15 +67,15 @@ public class MyDashboardDemandComponent extends MyDashboardComponent
 {
     
     public static final String MARK_NB_ITEMS_PER_PAGE = "nb_items_per_page";
-    public static final String PROPERTY_URL_MES_DEMARCHES="mydashboard-mycaccount.url.mesdemarches";
+    public static final String PROPERTY_URL_MES_DEMARCHES="mydashboard-myaccount.url.mesdemarches";
     
-    private static final String DASHBOARD_COMPONENT_ID = "mydashboard-mycaccount.demandsComponent";
+    private static final String DASHBOARD_COMPONENT_ID = "mydashboard-myaccount.demandsComponent";
     private static final String MESSAGE_DASHBOARD_COMPONENT_DESCRIPTION = "module.mydashboard.myaccount.component.demands.description";
     private static final String TEMPLATE_DASHBOARD_COMPONENT = "/skin/plugins/mydashboard/modules/myaccount/demands_component.html";
     private static final String MARK_XPAGE_MYDASHBOARD = "mydashboard";
     private static final String MARK_PAGINATOR = "paginator";
     private static final String CURRENT_PAGE_INDEX = "current_page_index";
-    private static final String PROPERTY_NUMBER_OF_DEMAND_PER_PAGE="mydashboard-mycaccount.numberOfDemandPerPage";
+    private static final String PROPERTY_NUMBER_OF_DEMAND_PER_PAGE="mydashboard-myaccount.numberOfDemandPerPage";
     
 
     

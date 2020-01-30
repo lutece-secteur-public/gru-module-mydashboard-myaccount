@@ -71,7 +71,7 @@ public class MyDemandService implements IMyDemandService
     private static final String MARK_DEMANDS_LIST = "demands_list";
     private static final String PLUGIN_CRM = "crm";
     private static final String PLUGIN_PARIS_CONNECT = "parisconnect";
-    private static final String DISPLAY_DEMAND_PARIS_CONNECT="mydashboard-mycaccount.displayDemandParisConnect";
+    private static final String DISPLAY_DEMAND_PARIS_CONNECT="mydashboard-myaccount.displayDemandParisConnect";
     
     
 
