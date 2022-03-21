@@ -39,9 +39,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
-import fr.paris.lutece.plugins.avatar.service.AvatarService;
 import fr.paris.lutece.plugins.crm.business.demand.Demand;
 import fr.paris.lutece.plugins.crm.business.demand.DemandType;
 import fr.paris.lutece.plugins.crm.business.notification.Notification;
@@ -52,18 +51,12 @@ import fr.paris.lutece.plugins.crm.service.demand.DemandTypeService;
 import fr.paris.lutece.plugins.crm.service.notification.NotificationService;
 import fr.paris.lutece.plugins.crm.service.user.CRMUserService;
 import fr.paris.lutece.plugins.crm.util.constants.CRMConstants;
-import fr.paris.lutece.plugins.parisconnect.business.Message;
-import fr.paris.lutece.plugins.parisconnect.business.UserInformations;
-import fr.paris.lutece.plugins.parisconnect.service.ParisConnectService;
-import fr.paris.lutece.plugins.parisconnect.web.MessageXPage;
 import fr.paris.lutece.portal.service.security.LuteceUser;
 import fr.paris.lutece.portal.service.security.SecurityService;
-import fr.paris.lutece.portal.service.security.UserNotSignedException;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 import fr.paris.lutece.portal.util.mvc.xpage.MVCApplication;
 import fr.paris.lutece.portal.util.mvc.xpage.annotations.Controller;
 import fr.paris.lutece.portal.web.xpages.XPage;
-import java.util.Map.Entry;
 
 
 @Controller( xpageName = "demandMyAcount", pageTitleI18nKey = "module.mydashboard.myaccount.demandMyAccountApp.pageTitle", pagePathI18nKey = "module.mydashboard.myaccount.demandMyAccountApp.pageLabel" )
@@ -139,92 +132,6 @@ public class DemandMyAccountApp extends MVCApplication
         return xpage;
     }
 
-    @View( value = VIEW_MESSAGES )
-    public XPage getUserMessagesHistory( HttpServletRequest request )
-        throws UserNotSignedException
-    {
-        Map<String, Object> model = getModel(  );
 
-        List<Message> listUserMessage = null;
-        LuteceUser user = SecurityService.getInstance(  ).getRegisteredUser( request );
-        Map<String, UserInformations> mapUserInformations = null;
-        Map<String, String> mapLuteceUserInformations = null;
-
-        if ( user == null )
-        {
-            throw new UserNotSignedException(  );
-        }
-
-        String strIdMessage = request.getParameter( PARAMETER_ID_MESSAGE );
-
-        UserInformations currentUserInformations = ParisConnectService.getInstance(  ).getUser( user.getName(  ), true );
-
-        if ( !StringUtils.isEmpty( strIdMessage ) && ( currentUserInformations != null ) &&
-                ( currentUserInformations.getIdUsers(  ) != null ) )
-        {
-            List<Message> parentMessage = ParisConnectService.getInstance(  ).getMessage( strIdMessage );
-
-            if ( ( parentMessage != null ) && !parentMessage.isEmpty(  ) )
-            {
-                if ( currentUserInformations.getIdUsers(  ).equals( parentMessage.get( 0 ).getIdUsersFrom(  ) ) )
-                {
-                    listUserMessage = ParisConnectService.getInstance(  ).getTicket( strIdMessage );
-                    mapUserInformations = MessageXPage.getUsersMapInformations( listUserMessage, currentUserInformations );
-                    mapLuteceUserInformations = user.getUserInfos();
-                    
-                    model.put( MARK_LUTECE_USER_INFORMATIONS, mapLuteceUserInformations );
-                    model.put( MARK_USER_INFORMATION_HASH, mapUserInformations );
-                    model.put( MARK_USER_MESSAGE_LIST, listUserMessage );
-                    model.put( MARK_AVATAR_URL, getAvatarUrl( request ) );
-                    
-                    
-                    //update unread flag
-                    if(PARIS_CONNECT_CONSTANT_UNREAD.equals( parentMessage.get( 0 ).getRead( )))
-                    {
-                        ParisConnectService.getInstance( ).markMessageAsRead( parentMessage.get( 0 ).getIdMessage( ) );
-                    }
-                  //update unread on sub message
-                    if (!CollectionUtils.isEmpty(listUserMessage))
-                    {
-                        for(Message message:listUserMessage)
-                        {
-                            if(PARIS_CONNECT_CONSTANT_UNREAD.equals(message.getRead( )))
-                            {
-                                //mark as read parent message if one of sub message is unread
-                                ParisConnectService.getInstance( ).markMessageAsRead( parentMessage.get( 0 ).getIdMessage( )  );
-                            }
-                        }
-                        
-                    }
-                    
-                   
-                }
-                 
-            }
-
-            model.put( MARK_ID_CURRENT_USER, currentUserInformations.getIdUsers(  ) );
-            model.put( MARK_ID_MESSAGE,strIdMessage);
-        }
-
-  
-
-
-        XPage xpage = getXPage( TEMPLATE_MESSAGE_LIST, getLocale( request ), model );
-        xpage.setStandalone( true );
-        return xpage;
-    }
-    
-    /**
-     * Return the avatar URL
-     * 
-     * @param request
-     *            The HTTP request
-     * @return The URL
-     */
-    private String getAvatarUrl( HttpServletRequest request )
-    {
-        LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
-        return AvatarService.getAvatarUrl( user.getEmail( ) );
-    }
     
 }

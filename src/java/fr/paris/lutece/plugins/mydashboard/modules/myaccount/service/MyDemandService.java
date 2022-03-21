@@ -34,7 +34,6 @@
 package fr.paris.lutece.plugins.mydashboard.modules.myaccount.service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -50,16 +49,9 @@ import fr.paris.lutece.plugins.crm.service.parameters.AdvancedParametersService;
 import fr.paris.lutece.plugins.crm.util.constants.CRMConstants;
 import fr.paris.lutece.plugins.mydashboard.modules.myaccount.business.CrmDemandWraper;
 import fr.paris.lutece.plugins.mydashboard.modules.myaccount.business.IDemandWraper;
-import fr.paris.lutece.plugins.mydashboard.modules.myaccount.business.MessageDemandWrapper;
-import fr.paris.lutece.plugins.parisconnect.business.Message;
-import fr.paris.lutece.plugins.parisconnect.business.UserInformations;
-import fr.paris.lutece.plugins.parisconnect.service.ParisConnectService;
-import fr.paris.lutece.portal.service.plugin.PluginService;
-import fr.paris.lutece.portal.service.security.LuteceUser;
 import fr.paris.lutece.portal.service.security.SecurityService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.util.AppPathService;
-import fr.paris.lutece.portal.service.util.AppPropertiesService;
 
 
 public class MyDemandService implements IMyDemandService
@@ -110,27 +102,7 @@ public class MyDemandService implements IMyDemandService
                     listDemandWraper.add( new CrmDemandWraper( demand ) );
                 }
             }
-        //Test if paris connect is enable
-        if(PluginService.isPluginEnable( PLUGIN_PARIS_CONNECT ) && AppPropertiesService.getPropertyBoolean( DISPLAY_DEMAND_PARIS_CONNECT, false ))
-        {
-            //Put All Message Demand
-            UserInformations currentUserInformations = ParisConnectService.getInstance(  )
-                                                                          .getUser( crmUser.getUserGuid(  ), true );
-    
-            if ( ( currentUserInformations != null ) && ( currentUserInformations.getIdUsers(  ) != null ) )
-            {
-                List<Message> listUserMessage = ParisConnectService.getInstance(  )
-                                                                   .getUserMessages( currentUserInformations.getIdUsers(  ) );
-    
-                if ( listUserMessage != null )
-                {
-                    for ( Message message : listUserMessage )
-                    {
-                        listDemandWraper.add( new MessageDemandWrapper( message ) );
-                    }
-                }
-            }
-        }
+  
 
         return listDemandWraper;
     }
@@ -150,20 +122,7 @@ public class MyDemandService implements IMyDemandService
         model.put( CRMConstants.MARK_MAP_DO_LOGIN, SecurityService.getInstance(  ).getLoginPageUrl(  ) );
         model.put( CRMConstants.MARK_BASE_URL, AppPathService.getBaseUrl( request ) );
 
-      //Test if paris connect is enable
-        if(PluginService.isPluginEnable( PLUGIN_PARIS_CONNECT )&& AppPropertiesService.getPropertyBoolean( DISPLAY_DEMAND_PARIS_CONNECT, false ))
-        {
-            //Message Informations
-            Map<String, UserInformations> mapUserInformations = null;
-            UserInformations currentUserInformations = ParisConnectService.getInstance(  )
-                                                                          .getUser( crmUser.getUserGuid(), true );
-            mapUserInformations = getUsersMapInformations( listDemand );
-            if(currentUserInformations!=null)
-            {
-        	model.put( MARK_ID_CURRENT_USER, currentUserInformations.getIdUsers(  ) );
-            }
-            model.put( MARK_USER_INFORMATION_HASH, mapUserInformations );
-        }
+    
        
         
         model.put( CRMConstants.MARK_CRM_USER, crmUser );
@@ -171,40 +130,5 @@ public class MyDemandService implements IMyDemandService
 
     }
     
-  private Map<String, UserInformations> getUsersMapInformations( List<IDemandWraper> lisdemandWraper )
-    {
-        Map<String, UserInformations> mapUserInformations = new HashMap<String, UserInformations>(  );
-        UserInformations userInformations = null;
-        Message message;
-
-        for ( IDemandWraper demandWrapper : lisdemandWraper )
-        {
-            if ( demandWrapper.getType(  ).equals( IDemandWraper.DEMAND_MESSAGE_TYPE ) )
-            {
-                message = (Message) demandWrapper.getDemand(  );
-
-                if ( !mapUserInformations.containsKey( message.getIdUsersFrom(  ) ) )
-                {
-                    userInformations = ParisConnectService.getInstance(  ).getUserName( message.getIdUsersFrom(  ), true );
-
-                    if ( userInformations != null )
-                    {
-                        mapUserInformations.put( message.getIdUsersFrom(  ), userInformations );
-                    }
-                }
-
-                if ( !mapUserInformations.containsKey( message.getIdUsersTo(  ) ) )
-                {
-                    userInformations = ParisConnectService.getInstance(  ).getUserName( message.getIdUsersTo(  ), true );
-
-                    if ( userInformations != null )
-                    {
-                        mapUserInformations.put( message.getIdUsersTo(  ), userInformations );
-                    }
-                }
-            }
-        }
-
-        return mapUserInformations;
-    }
+  
 }
