@@ -69,6 +69,8 @@ public class MyDashboardLastDemandComponent extends MyDashboardComponent
     private static final String TEMPLATE_DASHBOARD_COMPONENT = "/skin/plugins/mydashboard/modules/myaccount/last_demands_component.html";
     private static final String MARK_XPAGE_MYDASHBOARD = "mydashboard";
   
+    private static final String PARAMETER_ALL = "all"; 
+    private static final String PARAMETER_CATEGORY_CODE = "cat"; 
   
     @Override
     public String getDashboardData( HttpServletRequest request )
@@ -85,7 +87,18 @@ public class MyDashboardLastDemandComponent extends MyDashboardComponent
         {
             Map<String, Object> model = new HashMap<String, Object>(  );
 
-            List<IDemandWraper> listDemandWraper = MyDemandService.getInstance(  ).getAllUserDemand( crmUser );
+            List<IDemandWraper> listDemandWraper = new ArrayList<IDemandWraper>(  ); 
+            
+            String categoryCode = request.getParameter( PARAMETER_CATEGORY_CODE ); 
+             
+            if ( PARAMETER_ALL.equals( categoryCode ) ) 
+            { 
+                listDemandWraper = MyDemandService.getInstance(  ).getAllUserDemand( crmUser ); 
+            } 
+            else if ( categoryCode != null && !categoryCode.trim( ).isEmpty( ) ) 
+            { 
+                listDemandWraper = MyDemandService.getInstance(  ).getUserDemandByCategory( crmUser, categoryCode ); 
+            }
             //Sort demand
             
             Collections.sort( listDemandWraper);

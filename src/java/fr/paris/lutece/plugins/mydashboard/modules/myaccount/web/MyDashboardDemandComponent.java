@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.mydashboard.modules.myaccount.web;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -77,7 +78,8 @@ public class MyDashboardDemandComponent extends MyDashboardComponent
     private static final String CURRENT_PAGE_INDEX = "current_page_index";
     private static final String PROPERTY_NUMBER_OF_DEMAND_PER_PAGE="mydashboard-myaccount.numberOfDemandPerPage";
     
-
+    private static final String PARAMETER_ALL = "all";
+    private static final String PARAMETER_CATEGORY_CODE = "cat";
     
     @Override
     public String getDashboardData( HttpServletRequest request )
@@ -96,8 +98,20 @@ public class MyDashboardDemandComponent extends MyDashboardComponent
         if ( crmUser != null )
         {
             Map<String, Object> model = new HashMap<String, Object>(  );
-
-            List<IDemandWraper> listDemandWraper = MyDemandService.getInstance(  ).getAllUserDemand( crmUser );
+            
+            List<IDemandWraper> listDemandWraper = new ArrayList<IDemandWraper>(  );
+            
+            String categoryCode = request.getParameter( PARAMETER_CATEGORY_CODE );
+            
+            if ( PARAMETER_ALL.equals( categoryCode ) )
+            {
+                listDemandWraper = MyDemandService.getInstance(  ).getAllUserDemand( crmUser );
+            }
+            else if ( categoryCode != null && !categoryCode.trim( ).isEmpty( ) )
+            {
+                listDemandWraper = MyDemandService.getInstance(  ).getUserDemandByCategory( crmUser, categoryCode );
+            }
+            
             //Sort demand 
             Collections.sort( listDemandWraper );
             HttpSession session = request.getSession( true );
