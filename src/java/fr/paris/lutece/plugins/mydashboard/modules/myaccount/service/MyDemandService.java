@@ -41,7 +41,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import fr.paris.lutece.plugins.crm.business.demand.Demand;
 import fr.paris.lutece.plugins.crm.business.demand.DemandFilter;
+import fr.paris.lutece.plugins.crm.business.demand.category.Category;
 import fr.paris.lutece.plugins.crm.business.user.CRMUser;
+import fr.paris.lutece.plugins.crm.service.category.CategoryService;
 import fr.paris.lutece.plugins.crm.service.demand.DemandService;
 import fr.paris.lutece.plugins.crm.service.demand.DemandStatusCRMService;
 import fr.paris.lutece.plugins.crm.service.demand.DemandTypeService;
@@ -108,6 +110,34 @@ public class MyDemandService implements IMyDemandService
     }
     
     
+    @Override
+    public List<IDemandWraper> getUserDemandByCategory( CRMUser crmUser, String categoryCode )
+    {
+        List<IDemandWraper> listDemandWraper = new ArrayList<IDemandWraper>(  );
+        
+        Category category = CategoryService.getService( ).findByCode( categoryCode );
+        
+        if ( category != null )
+        {
+            DemandFilter dFilter = new DemandFilter(  );
+            dFilter.setIdCRMUser( crmUser.getIdCRMUser(  ) );
+            
+            List<Demand> listDemand = DemandService.getService(  ).findByFilter( dFilter );
+            
+            if ( listDemand != null )
+            {
+                for ( Demand demand : listDemand )
+                {
+                    if ( DemandTypeService.getService( ).findByPrimaryKey( demand.getIdDemandType( ) ).getIdCategory( ) == category.getIdCategory( ) )
+                    {
+                        listDemandWraper.add( new CrmDemandWraper( demand ) );
+                    }
+                }
+            }
+        }
+        
+        return listDemandWraper;
+    }
  
     public void addInformations(HttpServletRequest request ,CRMUser crmUser,List<IDemandWraper>listDemand,Map<String, Object> model)
     {

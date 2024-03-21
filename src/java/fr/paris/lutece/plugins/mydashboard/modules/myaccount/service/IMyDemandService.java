@@ -47,5 +47,6 @@ public interface IMyDemandService
 {
     List<IDemandWraper> getAllUserDemand( CRMUser crmUser );
     void addInformations(HttpServletRequest request ,CRMUser crmUser,List<IDemandWraper>listDemand,Map<String, Object> model);
+    List<IDemandWraper> getUserDemandByCategory( CRMUser crmUser, String parameter );
     
 }
