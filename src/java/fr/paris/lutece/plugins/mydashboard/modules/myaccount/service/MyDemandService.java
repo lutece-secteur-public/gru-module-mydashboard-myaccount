@@ -41,6 +41,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import fr.paris.lutece.plugins.crm.business.demand.Demand;
 import fr.paris.lutece.plugins.crm.business.demand.DemandFilter;
+import fr.paris.lutece.plugins.crm.business.demand.DemandType;
 import fr.paris.lutece.plugins.crm.business.demand.category.Category;
 import fr.paris.lutece.plugins.crm.business.user.CRMUser;
 import fr.paris.lutece.plugins.crm.service.category.CategoryService;
@@ -128,7 +129,8 @@ public class MyDemandService implements IMyDemandService
             {
                 for ( Demand demand : listDemand )
                 {
-                    if ( DemandTypeService.getService( ).findByPrimaryKey( demand.getIdDemandType( ) ).getIdCategory( ) == category.getIdCategory( ) )
+                    DemandType demandType = DemandTypeService.getService( ).findByPrimaryKey( demand.getIdDemandType( ) );
+                    if ( demandType != null && demandType.getIdCategory( ) == category.getIdCategory( ) )
                     {
                         listDemandWraper.add( new CrmDemandWraper( demand ) );
                     }
