@@ -122,7 +122,7 @@ public class MyDashboardDemandComponent extends MyDashboardComponent
             
     	    int nDefaultItemsPerPage = AppPropertiesService.getPropertyInt( PROPERTY_NUMBER_OF_DEMAND_PER_PAGE, 10 );
     	     // PAGINATOR
-            LocalizedPaginator<IDemandWraper> paginator = new LocalizedPaginator<IDemandWraper>( listDemandWraper, nDefaultItemsPerPage, AppPropertiesService.getProperty(PROPERTY_URL_MES_DEMARCHES), Paginator.PARAMETER_PAGE_INDEX, strCurrentPageIndex, request.getLocale(  ) );
+            LocalizedPaginator<IDemandWraper> paginator = new LocalizedPaginator<IDemandWraper>( listDemandWraper, nDefaultItemsPerPage, AppPropertiesService.getProperty(PROPERTY_URL_MES_DEMARCHES) + categoryCode, Paginator.PARAMETER_PAGE_INDEX, strCurrentPageIndex, request.getLocale(  ) );
 
             model.put( MARK_NB_ITEMS_PER_PAGE, "" + nDefaultItemsPerPage );
             model.put( MARK_PAGINATOR, paginator );
