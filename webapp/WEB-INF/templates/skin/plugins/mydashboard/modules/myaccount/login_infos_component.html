@@ -1,0 +1,45 @@
+<div class="portal">
+	<h2>#i18n{module.mydashboard.myaccount.dashboard.loginInfos.title}</h2>
+	<p>#i18n{module.mydashboard.myaccount.dashboard.loginInfos.labelConnexionMail} : <b>${login_email!}</b><br>
+		<a href="jsp/site/Portal.jsp?page=myluteceusergu&view=modifyAccount" class="p-0 text-underline text-left" data-toggle="modal" data-target="#accountModal" data-title="Modify Login Email">
+			#i18n{module.mydashboard.myaccount.dashboard.loginInfos.labelModifyMailLogin}
+		</a>
+	</p>
+	<br>
+	<p>#i18n{module.mydashboard.myaccount.dashboard.loginInfos.labelPassword} : #i18n{module.mydashboard.myaccount.dashboard.loginInfos.labelLastModifyPasswordDate} <b>${last_modify_password_date!}</b><br>
+		<a href="jsp/site/Portal.jsp?page=myluteceusergu&view=changePassword" class="p-0 text-underline text-left" data-toggle="modal" data-target="#accountModal" data-title="Modify Password">
+			#i18n{module.mydashboard.myaccount.dashboard.loginInfos.labelModifyPassword}
+		</a>
+	</p>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="accountModal" tabindex="-1" role="dialog" aria-labelledby="accountModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="h5 modal-title" id="accountModalTitle"></h1>
+                <button type="button" class="close" data-dismiss="modal" aria-label="#i18n{module.mydashboard.identity.xpage.edit_identity.labelClose}">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <iframe src="" title=""></iframe>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-primary" data-dismiss="modal">#i18n{module.mydashboard.identity.xpage.edit_identity.labelClose}</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+$( function(){
+	  $('#accountModal').on('show.bs.modal', function (event) {
+	      var button = $(event.relatedTarget);
+	      var url = button.attr('href');
+	      var title = button.data('title');
+	      var modal = $(this);
+	      modal.find('.modal-title').text(title);
+	      modal.find('.modal-body iframe').attr('src', url ).attr('title', title );
+	    });
+	});
+</script>
